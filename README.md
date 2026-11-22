@@ -7,6 +7,17 @@ Only two I2C wires go to the display, which leaves your MCU's pins free. The lib
 MCU-specific code. You connect it to your own I2C driver and delay functions in a single config
 header, so it works with any PIC (XC8) and with other MCUs and compilers that support C99.
 
+## Demo
+
+<p align="center">
+  <img src="docs/demo.gif" alt="ST7920 128x64 GLCD running the animation example: radar sweep, bouncing ball and frame counter" width="300">
+</p>
+
+<p align="center">
+  The <a href="examples/pic16f1779_curiosity_hpc">PIC16F1779 example</a> running over I2C at 400 kHz
+  (<a href="docs/demo.mp4">MP4 version</a>)
+</p>
+
 ## Features
 
 - **Text mode**: the ST7920's built-in 8×16 font, 4 lines × 16 characters, with no frame buffer
