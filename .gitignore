@@ -1,0 +1,22 @@
+# MPLAB X / XC8 build output
+build/
+dist/
+debug/
+nbproject/private/
+*.p1
+*.d
+*.pre
+*.obj
+*.hex
+*.elf
+*.map
+*.lst
+*.sym
+*.sdb
+*.cof
+*.hxl
+*.rlf
+*.cmf
+*.as
+*.o
+funclist
