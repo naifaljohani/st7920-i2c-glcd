@@ -10,6 +10,7 @@
 /* 1) I2C address of the expander (7-bit)                              */
 /*    PCF8574 / PCA8574 : 0x20..0x27 (most boards 0x27)                */
 /*    PCF8574A          : 0x38..0x3F (most boards 0x3F)                */
+/*    Not sure? Run examples/i2c_address_finder                        */
 /* ------------------------------------------------------------------ */
 #define GLCD_I2C_ADDR   0x27
 

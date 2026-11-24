@@ -81,6 +81,8 @@ glcd_update();
 
 There is a complete working example (an animation with a radar sweep, a bouncing ball and a frame
 counter) in [`examples/pic16f1779_curiosity_hpc`](examples/pic16f1779_curiosity_hpc).
+If the display stays blank, [`examples/i2c_address_finder`](examples/i2c_address_finder)
+checks the expander and tells you its address.
 
 ## Porting: the 5 macros
 
@@ -157,7 +159,17 @@ faster.
 ## Troubleshooting
 
 - **Blank screen:** check that PSB is tied high and R/W to GND, then adjust the contrast pot.
-- **Nothing at all:** check the I2C address (0x27 or 0x3F) and the pull-up resistors.
+- **Nothing at all:** check the I2C address and the pull-up resistors. The address depends on
+  the chip and on the A0–A2 pins:
+
+  | A2 A1 A0 | PCF8574 / PCA8574 | PCF8574A |
+  |---|---|---|
+  | all to GND | 0x20 | 0x38 |
+  | all to VCC (common on ready-made boards) | 0x27 | 0x3F |
+
+  Each address pin adds its weight (A0 = 1, A1 = 2, A2 = 4) when tied to VCC. If you aren't
+  sure which chip you have, run the [I2C address finder](examples/i2c_address_finder). It
+  blinks the address on an LED, without needing the display.
 - **Garbage at 400 kHz:** go back to 100 kHz. The expander may not support the faster speed.
 - **Text overlapping graphics:** the ST7920 text and graphics layers are shown on top of each
   other. `glcd_gfx_begin()` clears the text layer.
