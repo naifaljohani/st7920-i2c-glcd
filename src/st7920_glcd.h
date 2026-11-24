@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include "st7920_glcd_config.h"
 
-#define ST7920_GLCD_VERSION "1.0.0"
+#define ST7920_GLCD_VERSION "1.0.1"
 
 #define GLCD_WIDTH   128
 #define GLCD_HEIGHT  64
