@@ -170,6 +170,11 @@ faster.
   Each address pin adds its weight (A0 = 1, A1 = 2, A2 = 4) when tied to VCC. If you aren't
   sure which chip you have, run the [I2C address finder](examples/i2c_address_finder). It
   blinks the address on an LED, without needing the display.
+- **Works after a power cycle but not right after flashing:** programming ends with a reset of
+  the MCU only. If that reset hits the middle of an I2C byte, the expander can be left holding
+  SDA low until its power is removed. The example's `i2c_init()` recovers the bus at start-up
+  (it clocks SCL until SDA is released, then sends a STOP). If you use your own I2C driver, add
+  the same step there.
 - **Garbage at 400 kHz:** go back to 100 kHz. The expander may not support the faster speed.
 - **Text overlapping graphics:** the ST7920 text and graphics layers are shown on top of each
   other. `glcd_gfx_begin()` clears the text layer.

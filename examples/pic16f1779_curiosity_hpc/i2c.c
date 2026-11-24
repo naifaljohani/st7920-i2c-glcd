@@ -8,6 +8,38 @@ static void i2c_wait(void)
         ;
 }
 
+// I2C bus recovery. After a reset that is not a power-up (for example the
+// MCLR reset at the end of programming) the expander may still be in the
+// middle of a byte and hold SDA low, which blocks the bus until power is
+// removed. Clock SCL until SDA is released, then send a STOP.
+// The pins are driven open-drain style: TRIS = 1 releases the line (the
+// pull-up makes it high), TRIS = 0 with LAT = 0 pulls it low.
+static void i2c_bus_recover(void)
+{
+    SSP1CON1 = 0x00;                // MSSP off
+    RC3PPS   = 0x00;                // PPS outputs survive an MCLR reset:
+    RC4PPS   = 0x00;                // give RC3/RC4 back to LATC
+    LATCbits.LATC3 = 0;
+    LATCbits.LATC4 = 0;
+    TRISCbits.TRISC3 = 1;           // SCL released
+    TRISCbits.TRISC4 = 1;           // SDA released
+    __delay_us(10);
+
+    for (uint8_t i = 0; i < 9u && !PORTCbits.RC4; i++)
+    {
+        TRISCbits.TRISC3 = 0;       // SCL low
+        __delay_us(10);
+        TRISCbits.TRISC3 = 1;       // SCL high
+        __delay_us(10);
+    }
+
+    // STOP: SDA goes low -> high while SCL is high
+    TRISCbits.TRISC3 = 0;  __delay_us(10);
+    TRISCbits.TRISC4 = 0;  __delay_us(10);
+    TRISCbits.TRISC3 = 1;  __delay_us(10);
+    TRISCbits.TRISC4 = 1;  __delay_us(10);
+}
+
 void i2c_init(void)
 {
     // RC3 / RC4 digital inputs (MSSP drives them open-drain)
@@ -15,6 +47,8 @@ void i2c_init(void)
     ANSELCbits.ANSC4 = 0;
     TRISCbits.TRISC3 = 1;
     TRISCbits.TRISC4 = 1;
+
+    i2c_bus_recover();              // free the bus if a reset hit mid-transfer
 
     // Peripheral Pin Select: route MSSP1 I2C to RC3 (SCL) and RC4 (SDA)
     SSPCLKPPS = 0x13;   // SCL input  <- RC3
